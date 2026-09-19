@@ -1,0 +1,65 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Pridėti EismoInfo orų stotelę",
+        "description": "Pasirinkite kelių orų stotelę ir (nebūtina) jai pavadinimą.",
+        "data": {
+          "station_id": "Stotelė",
+          "custom_name": "Pavadinimas"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Ši stotelė jau sukonfigūruota.",
+      "cannot_connect": "Nepavyko prisijungti prie eismoinfo.lt.",
+      "no_stations_available": "Visos stotelės jau pridėtos."
+    },
+    "error": {
+      "invalid_station": "Pasirinkta stotelė nerasta."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "EismoInfo nustatymai",
+        "data": {
+          "custom_name": "Pavadinimas",
+          "scan_interval": "Atnaujinimo intervalas (s)"
+        }
+      }
+    }
+  },
+  "issues": {
+    "station_unavailable": {
+      "title": "Stotelė „{name}“ nebegrąžina duomenų",
+      "description": "Stotelė „{name}“ (ID {station_id}) daugiau nebėra grąžinama eismoinfo.lt API atsakyme. Stotelė galėjo laikinai sugesti arba būti pašalinta iš tinklo. Jos sensoriai bus rodomi kaip „nepasiekiami“, kol stotelė vėl pradės teikti duomenis – šis pranešimas dings automatiškai."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "air_temperature": { "name": "Oro temperatūra" },
+      "road_surface_temperature": { "name": "Kelio dangos temperatūra" },
+      "dew_point": { "name": "Rasos taškas" },
+      "freezing_point": { "name": "Užšalimo taškas" },
+      "wind_speed_avg": { "name": "Vidutinis vėjo greitis" },
+      "wind_speed_max": { "name": "Maksimalus vėjo greitis" },
+      "wind_direction": { "name": "Vėjo kryptis" },
+      "precipitation_type": { "name": "Kritulių tipas" },
+      "precipitation_amount": { "name": "Kritulių kiekis" },
+      "visibility": { "name": "Matomumas" },
+      "road_condition": { "name": "Kelio danga" },
+      "friction_coefficient": { "name": "Sukibimo koeficientas" },
+      "warnings": { "name": "Įspėjimai" },
+      "last_update": { "name": "Paskutinis atnaujinimas" },
+      "construction_temp_007": { "name": "Konstrukcijos temperatūra 7 cm" },
+      "construction_temp_020": { "name": "Konstrukcijos temperatūra 20 cm" },
+      "construction_temp_050": { "name": "Konstrukcijos temperatūra 50 cm" },
+      "construction_temp_080": { "name": "Konstrukcijos temperatūra 80 cm" },
+      "construction_temp_110": { "name": "Konstrukcijos temperatūra 110 cm" },
+      "construction_temp_140": { "name": "Konstrukcijos temperatūra 140 cm" },
+      "construction_temp_170": { "name": "Konstrukcijos temperatūra 170 cm" },
+      "construction_temp_200": { "name": "Konstrukcijos temperatūra 200 cm" }
+    }
+  }
+}

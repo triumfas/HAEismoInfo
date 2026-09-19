@@ -1,0 +1,65 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add an EismoInfo weather station",
+        "description": "Choose a road weather station and, optionally, a name for it.",
+        "data": {
+          "station_id": "Station",
+          "custom_name": "Name"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This station is already configured.",
+      "cannot_connect": "Could not connect to eismoinfo.lt.",
+      "no_stations_available": "All stations have already been added."
+    },
+    "error": {
+      "invalid_station": "The selected station could not be found."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "EismoInfo options",
+        "data": {
+          "custom_name": "Name",
+          "scan_interval": "Update interval (s)"
+        }
+      }
+    }
+  },
+  "issues": {
+    "station_unavailable": {
+      "title": "Station \"{name}\" is no longer reporting data",
+      "description": "Station \"{name}\" (ID {station_id}) is no longer present in the eismoinfo.lt API response. The station may be temporarily down or may have been removed from the network. Its sensors will show as \"unavailable\" until it starts reporting data again - this issue will clear automatically."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "air_temperature": { "name": "Air temperature" },
+      "road_surface_temperature": { "name": "Road surface temperature" },
+      "dew_point": { "name": "Dew point" },
+      "freezing_point": { "name": "Freezing point" },
+      "wind_speed_avg": { "name": "Average wind speed" },
+      "wind_speed_max": { "name": "Maximum wind speed" },
+      "wind_direction": { "name": "Wind direction" },
+      "precipitation_type": { "name": "Precipitation type" },
+      "precipitation_amount": { "name": "Precipitation amount" },
+      "visibility": { "name": "Visibility" },
+      "road_condition": { "name": "Road condition" },
+      "friction_coefficient": { "name": "Friction coefficient" },
+      "warnings": { "name": "Warnings" },
+      "last_update": { "name": "Last update" },
+      "construction_temp_007": { "name": "Construction temperature 7 cm" },
+      "construction_temp_020": { "name": "Construction temperature 20 cm" },
+      "construction_temp_050": { "name": "Construction temperature 50 cm" },
+      "construction_temp_080": { "name": "Construction temperature 80 cm" },
+      "construction_temp_110": { "name": "Construction temperature 110 cm" },
+      "construction_temp_140": { "name": "Construction temperature 140 cm" },
+      "construction_temp_170": { "name": "Construction temperature 170 cm" },
+      "construction_temp_200": { "name": "Construction temperature 200 cm" }
+    }
+  }
+}
