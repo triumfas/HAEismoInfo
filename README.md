@@ -6,18 +6,29 @@
 Home Assistant custom integracija, kuri naudoja viešą [eismoinfo.lt](https://eismoinfo.lt) API ir
 sukuria sensorius pasirinktoms kelių orų stotelėms (KOS).
 
+Reikalinga **Home Assistant 2024.11 arba naujesnė** (dėl Reconfigure config flow API).
+
 ## Galimybės
 
 - Prisijungiama prie viešo eismoinfo.lt „weather-conditions“ API (autentifikacijos nereikia).
 - Galima pridėti bet kiek stotelių – kiekvienai sukuriamas atskiras įrenginys (device).
+- Stotelių sąrašas pridedant rūšiuojamas **pagal atstumą nuo jūsų HA namų lokacijos** (jei ji
+  nustatyta), kad artimiausios stotelės būtų sąrašo viršuje, o ne abėcėlės tvarka iš ~165.
 - Kiekvienai stotelei galima nustatyti **savo pavadinimą**, nebūtinai tą, kurį grąžina API.
 - Pavadinimą ir atnaujinimo intervalą bet kada galima pakeisti per integracijos nustatymus
-  (Options).
+  (Options); pačią stotelę galima pakeisti per **Reconfigure**.
 - Kiekvienai stotelei sukuriami sensoriai: oro temperatūra, kelio dangos temperatūra, rasos
   taškas, vėjo greitis (vidutinis/maksimalus) ir kryptis, kritulių tipas ir kiekis, matomumas,
   kelio dangos būklė, sukibimo koeficientas, įspėjimai ir paskutinio atnaujinimo laikas.
+  Kritulių tipo ir kelio dangos sensorių ikonos keičiasi pagal reikšmę (pvz. sninga/lyja/sausa).
+- **„Kelio pavojus“ (binary_sensor)** – įjungtas, kai stotelė praneša bet kokį įspėjimą, kitokį
+  nei „geros“/„nesudėtingos“ sąlygos – patogu automatizacijoms be teksto sensoriaus parsinimo.
 - Papildomai (išjungti pagal nutylėjimą, nes daugumoje stotelių duomenų nėra): užšalimo taškas ir
   kelio konstrukcijos temperatūros keliuose gyliuose.
+- Kai stotelė nustoja grąžinti duomenis, apie tai aiškiai pranešama **Repairs** skydelyje (ne
+  vien tylus sensorių pilkėjimas).
+- Palaikomas **diagnostikos eksportas** (Nustatymai → Įrenginiai → stotelė → „Atsisiųsti
+  diagnostiką“) – naudinga pranešant apie klaidas.
 
 ## Diegimas
 
@@ -42,7 +53,10 @@ sukuria sensorius pasirinktoms kelių orų stotelėms (KOS).
 4. Kartokite žingsnius kiekvienai norimai stotelei.
 
 Norėdami pervadinti stotelę arba pakeisti atnaujinimo dažnį vėliau, eikite į integracijos kortelę
-→ **Konfigūruoti** (Options).
+→ **Konfigūruoti** (Options). Norėdami pakeisti pačią stotelę (nekeičiant pavadinimo/istorijos),
+naudokite **Reconfigure** (integracijos kortelės meniu ⋮).
+
+> Reconfigure žingsniui reikia Home Assistant **2024.11+**.
 
 ## Sensoriai
 
@@ -59,8 +73,24 @@ Norėdami pervadinti stotelę arba pakeisti atnaujinimo dažnį vėliau, eikite 
 | Sukibimo koeficientas | – | ✅ |
 | Įspėjimai | – | ✅ |
 | Paskutinis atnaujinimas | – | ✅ |
+| **Kelio pavojus** (binary_sensor) | on/off | ✅ |
 | Užšalimo taškas | °C | ❌ |
 | Konstrukcijos temperatūra (7–200 cm) | °C | ❌ |
+
+## Pavyzdinė Lovelace kortelė
+
+```yaml
+type: entities
+title: Kelio stotelė
+entities:
+  - entity: sensor.mano_stotele_air_temperature
+  - entity: sensor.mano_stotele_road_surface_temperature
+  - entity: sensor.mano_stotele_road_condition
+  - entity: binary_sensor.mano_stotele_road_hazard
+  - entity: sensor.mano_stotele_last_update
+```
+
+(Pakeiskite `mano_stotele` į jūsų stotelės entity_id prefiksą.)
 
 ## Duomenų šaltinis
 

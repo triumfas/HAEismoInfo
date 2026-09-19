@@ -5,10 +5,11 @@ from __future__ import annotations
 import asyncio
 import logging
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import datetime
 from typing import Any
 
 import aiohttp
+from homeassistant.util import dt as dt_util
 
 from .const import API_URL
 
@@ -91,7 +92,7 @@ def _to_datetime(value: Any) -> datetime | None:
     if value is None or value == "":
         return None
     try:
-        return datetime.fromtimestamp(int(value), tz=UTC)
+        return dt_util.utc_from_timestamp(int(value))
     except (TypeError, ValueError, OSError):
         return None
 

@@ -11,6 +11,16 @@ from .const import CONF_CUSTOM_NAME, CONF_STATION_ID, DOMAIN, MANUFACTURER, MODE
 from .coordinator import EismoInfoCoordinator
 
 
+def resolve_device_name(entry: ConfigEntry) -> str:
+    """Return the display name for a station's entry (device, Repairs, ...).
+
+    Single source of truth for "custom name, falling back to the entry
+    title" so entity.py, __init__.py's Repairs issue text, etc. can't drift
+    into subtly different fallback rules.
+    """
+    return entry.options.get(CONF_CUSTOM_NAME) or entry.title
+
+
 class EismoInfoEntity(CoordinatorEntity[EismoInfoCoordinator]):
     """Base class for all EismoInfo entities, tied to one station/config entry."""
 
@@ -24,11 +34,9 @@ class EismoInfoEntity(CoordinatorEntity[EismoInfoCoordinator]):
         self._entry = entry
         self._station_id: str = entry.data[CONF_STATION_ID]
 
-        device_name = entry.options.get(CONF_CUSTOM_NAME) or entry.title
-
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._station_id)},
-            name=device_name,
+            name=resolve_device_name(entry),
             manufacturer=MANUFACTURER,
             model=MODEL,
             configuration_url="https://eismoinfo.lt",

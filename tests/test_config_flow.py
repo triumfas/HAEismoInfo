@@ -99,3 +99,51 @@ async def test_options_flow_renames_entry(hass, mock_stations_response):
     assert options_result["type"] == FlowResultType.CREATE_ENTRY
     assert entry.title == "Naujas pavadinimas"
     assert entry.options[CONF_SCAN_INTERVAL] == 120
+
+
+async def test_options_flow_rejects_empty_name(hass, mock_stations_response):
+    """Clearing the name field in options must not save an empty name."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {CONF_STATION_ID: "206", CONF_CUSTOM_NAME: "Mano stotelė"}
+    )
+    entry = hass.config_entries.async_entries(DOMAIN)[0]
+
+    options_result = await hass.config_entries.options.async_init(entry.entry_id)
+    options_result = await hass.config_entries.options.async_configure(
+        options_result["flow_id"],
+        {CONF_CUSTOM_NAME: "   ", CONF_SCAN_INTERVAL: 120},
+    )
+
+    assert options_result["type"] == FlowResultType.FORM
+    assert options_result["errors"] == {"base": "name_required"}
+    # Nothing was saved - the original name/title must be untouched.
+    assert entry.title == "Mano stotelė"
+    assert entry.options[CONF_CUSTOM_NAME] == "Mano stotelė"
+
+
+async def test_reconfigure_changes_station(hass, mock_stations_response):
+    """The reconfigure step should retarget an entry at a different station."""
+    result = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {CONF_STATION_ID: "206", CONF_CUSTOM_NAME: "Mano stotelė"}
+    )
+    entry = hass.config_entries.async_entries(DOMAIN)[0]
+    assert entry.data[CONF_STATION_ID] == "206"
+
+    reconfigure_result = await entry.start_reconfigure_flow(hass)
+    assert reconfigure_result["type"] == FlowResultType.FORM
+
+    result2 = await hass.config_entries.flow.async_configure(
+        reconfigure_result["flow_id"], {CONF_STATION_ID: "157"}
+    )
+
+    assert result2["type"] == FlowResultType.ABORT
+    assert result2["reason"] == "reconfigure_successful"
+    assert entry.data[CONF_STATION_ID] == "157"
+    # Custom name is untouched by a station change.
+    assert entry.title == "Mano stotelė"

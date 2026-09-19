@@ -8,12 +8,21 @@
           "station_id": "Station",
           "custom_name": "Name"
         }
+      },
+      "reconfigure": {
+        "title": "Change EismoInfo station",
+        "description": "Pick a different station for this device. The name and update interval stay unchanged.",
+        "data": {
+          "station_id": "Station"
+        }
       }
     },
     "abort": {
       "already_configured": "This station is already configured.",
       "cannot_connect": "Could not connect to eismoinfo.lt.",
-      "no_stations_available": "All stations have already been added."
+      "no_stations_available": "All stations have already been added.",
+      "unknown": "Unexpected error while fetching data from eismoinfo.lt.",
+      "reconfigure_successful": "The station was changed successfully."
     },
     "error": {
       "invalid_station": "The selected station could not be found."
@@ -28,6 +37,9 @@
           "scan_interval": "Update interval (s)"
         }
       }
+    },
+    "error": {
+      "name_required": "Please enter a name - it cannot be empty."
     }
   },
   "issues": {
@@ -37,6 +49,9 @@
     }
   },
   "entity": {
+    "binary_sensor": {
+      "road_hazard": { "name": "Road hazard" }
+    },
     "sensor": {
       "air_temperature": { "name": "Air temperature" },
       "road_surface_temperature": { "name": "Road surface temperature" },

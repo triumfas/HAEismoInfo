@@ -8,12 +8,21 @@
           "station_id": "Stotelė",
           "custom_name": "Pavadinimas"
         }
+      },
+      "reconfigure": {
+        "title": "Pakeisti EismoInfo stotelę",
+        "description": "Pasirinkite kitą stotelę šiam įrenginiui. Pavadinimas ir atnaujinimo intervalas liks nepakeisti.",
+        "data": {
+          "station_id": "Stotelė"
+        }
       }
     },
     "abort": {
       "already_configured": "Ši stotelė jau sukonfigūruota.",
       "cannot_connect": "Nepavyko prisijungti prie eismoinfo.lt.",
-      "no_stations_available": "Visos stotelės jau pridėtos."
+      "no_stations_available": "Visos stotelės jau pridėtos.",
+      "unknown": "Netikėta klaida gaunant duomenis iš eismoinfo.lt.",
+      "reconfigure_successful": "Stotelė sėkmingai pakeista."
     },
     "error": {
       "invalid_station": "Pasirinkta stotelė nerasta."
@@ -28,6 +37,9 @@
           "scan_interval": "Atnaujinimo intervalas (s)"
         }
       }
+    },
+    "error": {
+      "name_required": "Įveskite pavadinimą – laukas negali būti tuščias."
     }
   },
   "issues": {
@@ -37,6 +49,9 @@
     }
   },
   "entity": {
+    "binary_sensor": {
+      "road_hazard": { "name": "Kelio pavojus" }
+    },
     "sensor": {
       "air_temperature": { "name": "Oro temperatūra" },
       "road_surface_temperature": { "name": "Kelio dangos temperatūra" },

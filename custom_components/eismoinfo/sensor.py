@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from operator import attrgetter
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -35,6 +36,40 @@ class EismoInfoSensorEntityDescription(SensorEntityDescription):
 
     value_fn: Callable[[Station], Any]
     attrs_fn: Callable[[Station], dict[str, Any]] | None = None
+    icon_fn: Callable[[Station], str | None] | None = None
+
+
+# Lithuanian precipitation/road-condition text isn't a confirmed closed
+# enum (see PLAN.md), so icons are chosen by keyword match against whatever
+# text the API sends, with a sensible default - rather than an exact
+# icons.json state map that would silently stop updating for any value we
+# haven't seen yet.
+def _precipitation_icon(station: Station) -> str:
+    text = (station.precipitation_type or "").lower()
+    if "sning" in text or "sniego" in text:
+        return "mdi:weather-snowy"
+    if "dulksn" in text:
+        return "mdi:weather-fog"
+    if "migl" in text:
+        return "mdi:weather-fog"
+    if "lyja" in text or "lietus" in text:
+        return "mdi:weather-pouring"
+    if "nėra" in text or "nera" in text:
+        return "mdi:weather-sunny"
+    return "mdi:weather-cloudy"
+
+
+def _road_condition_icon(station: Station) -> str:
+    text = (station.road_condition or "").lower()
+    if "apledėj" in text or "ledas" in text or "slidu" in text:
+        return "mdi:road-variant"  # no dedicated "icy road" mdi icon
+    if "snieg" in text:
+        return "mdi:snowflake"
+    if "šlap" in text or "drėgn" in text:
+        return "mdi:water"
+    if "saus" in text:
+        return "mdi:road-variant"
+    return "mdi:road-variant"
 
 
 def _warnings_state(station: Station) -> str | None:
@@ -59,6 +94,27 @@ def _station_attrs(station: Station) -> dict[str, Any]:
         "latitude": station.latitude,
         "longitude": station.longitude,
     }
+
+
+_CONSTRUCTION_TEMP_DEPTHS_CM = ("007", "020", "050", "080", "110", "140", "170", "200")
+
+# Split out from SENSOR_DESCRIPTIONS below so the "one family of similar
+# sensors, generated" shape doesn't get lost among the hand-written entries.
+_CONSTRUCTION_TEMP_DESCRIPTIONS: tuple[EismoInfoSensorEntityDescription, ...] = tuple(
+    EismoInfoSensorEntityDescription(
+        key=f"construction_temp_{depth}",
+        translation_key=f"construction_temp_{depth}",
+        device_class=SensorDeviceClass.TEMPERATURE,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        entity_registry_enabled_default=False,
+        # attrgetter binds the attribute name by value, so this needs none
+        # of the "lambda depth: lambda s: ..." closure tricks a plain
+        # per-iteration lambda would require to avoid late binding.
+        value_fn=attrgetter(f"construction_temp_{depth}"),
+    )
+    for depth in _CONSTRUCTION_TEMP_DEPTHS_CM
+)
 
 
 SENSOR_DESCRIPTIONS: tuple[EismoInfoSensorEntityDescription, ...] = (
@@ -111,7 +167,8 @@ SENSOR_DESCRIPTIONS: tuple[EismoInfoSensorEntityDescription, ...] = (
     EismoInfoSensorEntityDescription(
         key="precipitation_type",
         translation_key="precipitation_type",
-        icon="mdi:weather-rainy",
+        icon="mdi:weather-cloudy",
+        icon_fn=_precipitation_icon,
         value_fn=lambda s: s.precipitation_type,
     ),
     EismoInfoSensorEntityDescription(
@@ -134,6 +191,7 @@ SENSOR_DESCRIPTIONS: tuple[EismoInfoSensorEntityDescription, ...] = (
         key="road_condition",
         translation_key="road_condition",
         icon="mdi:road-variant",
+        icon_fn=_road_condition_icon,
         value_fn=lambda s: s.road_condition,
     ),
     EismoInfoSensorEntityDescription(
@@ -167,20 +225,7 @@ SENSOR_DESCRIPTIONS: tuple[EismoInfoSensorEntityDescription, ...] = (
         entity_registry_enabled_default=False,
         value_fn=lambda s: s.freezing_point,
     ),
-    *(
-        EismoInfoSensorEntityDescription(
-            key=f"construction_temp_{depth}",
-            translation_key=f"construction_temp_{depth}",
-            device_class=SensorDeviceClass.TEMPERATURE,
-            state_class=SensorStateClass.MEASUREMENT,
-            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-            entity_registry_enabled_default=False,
-            value_fn=(lambda depth: lambda s: getattr(s, f"construction_temp_{depth}"))(
-                depth
-            ),
-        )
-        for depth in ("007", "020", "050", "080", "110", "140", "170", "200")
-    ),
+    *_CONSTRUCTION_TEMP_DESCRIPTIONS,
 )
 
 
@@ -190,7 +235,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up EismoInfo sensors for a config entry."""
-    coordinator: EismoInfoCoordinator = hass.data[DOMAIN]["coordinator"]
+    # Looked up per-entry (rather than the shared "coordinator" key) so this
+    # can never be affected by a *different* entry's concurrent unload.
+    coordinator: EismoInfoCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     async_add_entities(
         EismoInfoSensor(coordinator, entry, description)
@@ -229,3 +276,11 @@ class EismoInfoSensor(EismoInfoEntity, SensorEntity):
         if station is None or self.entity_description.attrs_fn is None:
             return None
         return self.entity_description.attrs_fn(station)
+
+    @property
+    def icon(self) -> str | None:
+        """Return a value-dependent icon, if the description defines one."""
+        station = self.station
+        if station is None or self.entity_description.icon_fn is None:
+            return self.entity_description.icon
+        return self.entity_description.icon_fn(station)
