@@ -70,18 +70,18 @@ pridėta Home Assistant'e.
 
 ## Ikonėlė
 
-`assets/icon.png` ir `assets/logo.png` – integracijos ikonėlė (256×256, permatomas fonas).
+`custom_components/eismoinfo/brand/icon.png` ir `brand/logo.png` (256×256,
+permatomas fonas) – integracijos ikonėlė.
 
-HACS ikonėlių nerenderina iš paties repo – jas ima iš atskiro
-[home-assistant/brands](https://github.com/home-assistant/brands) repo, kataloge
-`custom_integrations/eismoinfo/`. Kad ikonėlė būtų rodoma HACS sąraše, reikia:
+Nuo Home Assistant **2026.3** custom integracijos gali turėti savo `brand/`
+katalogą tiesiai integracijos aplanke – HA/HACS tokius vietinius vaizdus
+naudoja automatiškai, jokio atskiro PR ar konfigūracijos nereikia. Senesnėse
+HA versijose ikonėlė bus rodoma bendrinė (placeholder), bet tai neturi
+įtakos integracijos veikimui.
 
-1. Fork'inti `home-assistant/brands`.
-2. Įkelti `icon.png` (ir nebūtina `logo.png`) į `custom_integrations/eismoinfo/`.
-3. Sukurti PR pagal jų [CONTRIBUTING](https://github.com/home-assistant/brands/blob/master/CONTRIBUTING.md) taisykles (domenas turi sutapti su `manifest.json` `domain` lauku – `eismoinfo`).
-
-Kol PR nepriimtas, HACS/HA rodys tik bendrinę (placeholder) ikonėlę – tai neturi
-įtakos pačios integracijos veikimui.
+Galimi failai kataloge `brand/`: `icon.png`, `icon@2x.png`, `logo.png`,
+`logo@2x.png`, bei tamsios temos variantai `dark_icon.png` / `dark_logo.png`
+(nebūtina).
 
 ## Licencija
 
