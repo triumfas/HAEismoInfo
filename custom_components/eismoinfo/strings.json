@@ -2,79 +2,79 @@
   "config": {
     "step": {
       "user": {
-        "title": "Pridėti EismoInfo orų stotelę",
-        "description": "Pasirinkite kelių orų stotelę ir (nebūtina) jai pavadinimą.",
+        "title": "Add an EismoInfo weather station",
+        "description": "Choose a road weather station and, optionally, a name for it.",
         "data": {
-          "station_id": "Stotelė",
-          "custom_name": "Pavadinimas"
+          "station_id": "Station",
+          "custom_name": "Name"
         }
       },
       "reconfigure": {
-        "title": "Pakeisti EismoInfo stotelę",
-        "description": "Pasirinkite kitą stotelę šiam įrenginiui. Pavadinimas ir atnaujinimo intervalas liks nepakeisti.",
+        "title": "Change EismoInfo station",
+        "description": "Pick a different station for this device. The name and update interval stay unchanged.",
         "data": {
-          "station_id": "Stotelė"
+          "station_id": "Station"
         }
       }
     },
     "abort": {
-      "already_configured": "Ši stotelė jau sukonfigūruota.",
-      "cannot_connect": "Nepavyko prisijungti prie eismoinfo.lt.",
-      "no_stations_available": "Visos stotelės jau pridėtos.",
-      "unknown": "Netikėta klaida gaunant duomenis iš eismoinfo.lt.",
-      "reconfigure_successful": "Stotelė sėkmingai pakeista."
+      "already_configured": "This station is already configured.",
+      "cannot_connect": "Could not connect to eismoinfo.lt.",
+      "no_stations_available": "All stations have already been added.",
+      "unknown": "Unexpected error while fetching data from eismoinfo.lt.",
+      "reconfigure_successful": "The station was changed successfully."
     },
     "error": {
-      "invalid_station": "Pasirinkta stotelė nerasta."
+      "invalid_station": "The selected station could not be found."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "EismoInfo nustatymai",
+        "title": "EismoInfo options",
         "data": {
-          "custom_name": "Pavadinimas",
-          "scan_interval": "Atnaujinimo intervalas (s)"
+          "custom_name": "Name",
+          "scan_interval": "Update interval (s)"
         }
       }
     },
     "error": {
-      "name_required": "Įveskite pavadinimą – laukas negali būti tuščias."
+      "name_required": "Please enter a name - it cannot be empty."
     }
   },
   "issues": {
     "station_unavailable": {
-      "title": "Stotelė „{name}“ nebegrąžina duomenų",
-      "description": "Stotelė „{name}“ (ID {station_id}) daugiau nebėra grąžinama eismoinfo.lt API atsakyme. Stotelė galėjo laikinai sugesti arba būti pašalinta iš tinklo. Jos sensoriai bus rodomi kaip „nepasiekiami“, kol stotelė vėl pradės teikti duomenis – šis pranešimas dings automatiškai."
+      "title": "Station \"{name}\" is no longer reporting data",
+      "description": "Station \"{name}\" (ID {station_id}) is no longer present in the eismoinfo.lt API response. The station may be temporarily down or may have been removed from the network. Its sensors will show as \"unavailable\" until it starts reporting data again - this issue will clear automatically."
     }
   },
   "entity": {
     "binary_sensor": {
-      "road_hazard": { "name": "Kelio pavojus" }
+      "road_hazard": { "name": "Road hazard" }
     },
     "sensor": {
-      "air_temperature": { "name": "Oro temperatūra" },
-      "road_surface_temperature": { "name": "Kelio dangos temperatūra" },
-      "dew_point": { "name": "Rasos taškas" },
-      "freezing_point": { "name": "Užšalimo taškas" },
-      "wind_speed_avg": { "name": "Vidutinis vėjo greitis" },
-      "wind_speed_max": { "name": "Maksimalus vėjo greitis" },
-      "wind_direction": { "name": "Vėjo kryptis" },
-      "precipitation_type": { "name": "Kritulių tipas" },
-      "precipitation_amount": { "name": "Kritulių kiekis" },
-      "visibility": { "name": "Matomumas" },
-      "road_condition": { "name": "Kelio danga" },
-      "friction_coefficient": { "name": "Sukibimo koeficientas" },
-      "warnings": { "name": "Įspėjimai" },
-      "last_update": { "name": "Paskutinis atnaujinimas" },
-      "construction_temp_007": { "name": "Konstrukcijos temperatūra 7 cm" },
-      "construction_temp_020": { "name": "Konstrukcijos temperatūra 20 cm" },
-      "construction_temp_050": { "name": "Konstrukcijos temperatūra 50 cm" },
-      "construction_temp_080": { "name": "Konstrukcijos temperatūra 80 cm" },
-      "construction_temp_110": { "name": "Konstrukcijos temperatūra 110 cm" },
-      "construction_temp_140": { "name": "Konstrukcijos temperatūra 140 cm" },
-      "construction_temp_170": { "name": "Konstrukcijos temperatūra 170 cm" },
-      "construction_temp_200": { "name": "Konstrukcijos temperatūra 200 cm" }
+      "air_temperature": { "name": "Air temperature" },
+      "road_surface_temperature": { "name": "Road surface temperature" },
+      "dew_point": { "name": "Dew point" },
+      "freezing_point": { "name": "Freezing point" },
+      "wind_speed_avg": { "name": "Average wind speed" },
+      "wind_speed_max": { "name": "Maximum wind speed" },
+      "wind_direction": { "name": "Wind direction" },
+      "precipitation_type": { "name": "Precipitation type" },
+      "precipitation_amount": { "name": "Precipitation amount" },
+      "visibility": { "name": "Visibility" },
+      "road_condition": { "name": "Road condition" },
+      "friction_coefficient": { "name": "Friction coefficient" },
+      "warnings": { "name": "Warnings" },
+      "last_update": { "name": "Last update" },
+      "construction_temp_007": { "name": "Construction temperature 7 cm" },
+      "construction_temp_020": { "name": "Construction temperature 20 cm" },
+      "construction_temp_050": { "name": "Construction temperature 50 cm" },
+      "construction_temp_080": { "name": "Construction temperature 80 cm" },
+      "construction_temp_110": { "name": "Construction temperature 110 cm" },
+      "construction_temp_140": { "name": "Construction temperature 140 cm" },
+      "construction_temp_170": { "name": "Construction temperature 170 cm" },
+      "construction_temp_200": { "name": "Construction temperature 200 cm" }
     }
   }
 }
