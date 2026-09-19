@@ -37,6 +37,13 @@ class EismoInfoSensorEntityDescription(SensorEntityDescription):
     value_fn: Callable[[Station], Any]
     attrs_fn: Callable[[Station], dict[str, Any]] | None = None
     icon_fn: Callable[[Station], str | None] | None = None
+    # Most sensors here measure something the station either does or doesn't
+    # currently report; a None value_fn result then means "this station
+    # isn't giving us this reading" and should show as *unavailable*, not
+    # the more ambiguous "unknown" (which HA shows for any None state).
+    # "warnings" is the one exception: None there just means "no active
+    # warnings right now", a real and legitimate value - not missing data.
+    unavailable_when_none: bool = True
 
 
 # Lithuanian precipitation/road-condition text isn't a confirmed closed
@@ -207,6 +214,7 @@ SENSOR_DESCRIPTIONS: tuple[EismoInfoSensorEntityDescription, ...] = (
         icon="mdi:alert-outline",
         value_fn=_warnings_state,
         attrs_fn=_warnings_attrs,
+        unavailable_when_none=False,  # None here means "no active warnings"
     ),
     EismoInfoSensorEntityDescription(
         key="last_update",
@@ -268,6 +276,21 @@ class EismoInfoSensor(EismoInfoEntity, SensorEntity):
         if station is None:
             return None
         return self.entity_description.value_fn(station)
+
+    @property
+    def available(self) -> bool:
+        """Return False if this station simply doesn't report this value.
+
+        Distinguishes "the API never sent this field" (unavailable - a
+        station that has no dew-point sensor, say) from "unknown" (which HA
+        would otherwise show for any None state, indistinguishable from a
+        station or coordinator outage).
+        """
+        if not super().available:
+            return False
+        if not self.entity_description.unavailable_when_none:
+            return True
+        return self.entity_description.value_fn(self.station) is not None
 
     @property
     def extra_state_attributes(self) -> dict[str, Any] | None:

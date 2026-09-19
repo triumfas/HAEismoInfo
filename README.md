@@ -77,6 +77,12 @@ naudokite **Reconfigure** (integracijos kortelės meniu ⋮).
 | Užšalimo taškas | °C | ❌ |
 | Konstrukcijos temperatūra (7–200 cm) | °C | ❌ |
 
+> **„Unavailable“ vs „Unknown“:** jei konkreti stotelė tiesiog neturi tam tikro matavimo
+> (pvz., dauguma stotelių neturi rasos taško ar konstrukcijos temperatūros jutiklių),
+> atitinkamas sensorius bus rodomas kaip **„Unavailable“** (pilkas, aiškiai matoma priežastis),
+> o ne dviprasmiškas „Unknown“. „Įspėjimų“ sensorius – išimtis: kai stotelė nepraneša jokių
+> įspėjimų, tai yra teisėta, žinoma būsena, o ne trūkstami duomenys.
+
 ## Pavyzdinė Lovelace kortelė
 
 ```yaml
