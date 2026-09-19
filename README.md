@@ -68,6 +68,21 @@ Duomenys imami iš viešo, neautorizuoto eismoinfo.lt API. Integracija naudoja v
 užklausą visoms stotelėms (kas ~5 min pagal nutylėjimą), nepriklausomai nuo to, kiek stotelių
 pridėta Home Assistant'e.
 
+## Ikonėlė
+
+`assets/icon.png` ir `assets/logo.png` – integracijos ikonėlė (256×256, permatomas fonas).
+
+HACS ikonėlių nerenderina iš paties repo – jas ima iš atskiro
+[home-assistant/brands](https://github.com/home-assistant/brands) repo, kataloge
+`custom_integrations/eismoinfo/`. Kad ikonėlė būtų rodoma HACS sąraše, reikia:
+
+1. Fork'inti `home-assistant/brands`.
+2. Įkelti `icon.png` (ir nebūtina `logo.png`) į `custom_integrations/eismoinfo/`.
+3. Sukurti PR pagal jų [CONTRIBUTING](https://github.com/home-assistant/brands/blob/master/CONTRIBUTING.md) taisykles (domenas turi sutapti su `manifest.json` `domain` lauku – `eismoinfo`).
+
+Kol PR nepriimtas, HACS/HA rodys tik bendrinę (placeholder) ikonėlę – tai neturi
+įtakos pačios integracijos veikimui.
+
 ## Licencija
 
 [MIT](LICENSE)
