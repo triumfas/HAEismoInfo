@@ -17,7 +17,14 @@ async def test_sensors_created_and_populated(hass, mock_stations_response):
     )
     await hass.async_block_till_done()
 
-    state = hass.states.get("sensor.baisogala_144_75_51_air_temperature")
+    air_temp_entity_id = None
+    for entity_id in hass.states.async_entity_ids("sensor"):
+        if entity_id.endswith("_air_temperature"):
+            air_temp_entity_id = entity_id
+            break
+    assert air_temp_entity_id is not None, hass.states.async_entity_ids("sensor")
+
+    state = hass.states.get(air_temp_entity_id)
     assert state is not None
     assert state.state == "16.5"
 

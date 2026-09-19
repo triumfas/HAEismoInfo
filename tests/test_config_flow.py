@@ -46,20 +46,28 @@ async def test_user_flow_defaults_to_api_name(hass, mock_stations_response):
 
 
 async def test_user_flow_duplicate_station_aborts(hass, mock_stations_response):
-    """Adding the same station twice should abort with already_configured."""
-    result = await hass.config_entries.flow.async_init(
-        DOMAIN, context={"source": config_entries.SOURCE_USER}
-    )
-    result = await hass.config_entries.flow.async_configure(
-        result["flow_id"], {CONF_STATION_ID: "206"}
-    )
-    assert result["type"] == FlowResultType.CREATE_ENTRY
+    """A second, concurrently-started flow must not create a duplicate entry.
 
-    result2 = await hass.config_entries.flow.async_init(
+    Both flows are started (and shown their dropdown) before either commits,
+    so both include station 206 as a valid choice - only the *second* one to
+    actually submit should be rejected, by the unique_id safety net rather
+    than by the dropdown filtering (which only excludes stations that were
+    already configured *before* a given flow was opened).
+    """
+    flow1 = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
     )
+    flow2 = await hass.config_entries.flow.async_init(
+        DOMAIN, context={"source": config_entries.SOURCE_USER}
+    )
+
+    result1 = await hass.config_entries.flow.async_configure(
+        flow1["flow_id"], {CONF_STATION_ID: "206"}
+    )
+    assert result1["type"] == FlowResultType.CREATE_ENTRY
+
     result2 = await hass.config_entries.flow.async_configure(
-        result2["flow_id"], {CONF_STATION_ID: "206"}
+        flow2["flow_id"], {CONF_STATION_ID: "206"}
     )
     assert result2["type"] == FlowResultType.ABORT
     assert result2["reason"] == "already_configured"
@@ -67,9 +75,11 @@ async def test_user_flow_duplicate_station_aborts(hass, mock_stations_response):
 
 async def test_user_flow_cannot_connect(hass, aioclient_mock):
     """A connection error while listing stations should abort the flow."""
+    import aiohttp
+
     from custom_components.eismoinfo.const import API_URL
 
-    aioclient_mock.get(API_URL, exc=Exception("boom"))
+    aioclient_mock.get(API_URL, exc=aiohttp.ClientConnectionError("boom"))
 
     result = await hass.config_entries.flow.async_init(
         DOMAIN, context={"source": config_entries.SOURCE_USER}
@@ -135,7 +145,13 @@ async def test_reconfigure_changes_station(hass, mock_stations_response):
     entry = hass.config_entries.async_entries(DOMAIN)[0]
     assert entry.data[CONF_STATION_ID] == "206"
 
-    reconfigure_result = await entry.start_reconfigure_flow(hass)
+    reconfigure_result = await hass.config_entries.flow.async_init(
+        DOMAIN,
+        context={
+            "source": config_entries.SOURCE_RECONFIGURE,
+            "entry_id": entry.entry_id,
+        },
+    )
     assert reconfigure_result["type"] == FlowResultType.FORM
 
     result2 = await hass.config_entries.flow.async_configure(

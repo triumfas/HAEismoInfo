@@ -55,7 +55,9 @@ async def test_get_stations_parses_construction_temperatures(hass, mock_stations
 
 async def test_get_stations_connection_error(hass, aioclient_mock):
     """A network failure should raise EismoInfoConnectionError."""
-    aioclient_mock.get(API_URL, exc=Exception("boom"))
+    import aiohttp
+
+    aioclient_mock.get(API_URL, exc=aiohttp.ClientConnectionError("boom"))
     client = EismoInfoApiClient(async_get_test_session(hass))
 
     with pytest.raises((EismoInfoConnectionError, EismoInfoApiError)):
